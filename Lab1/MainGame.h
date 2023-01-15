@@ -10,6 +10,7 @@
 #include "SkyBox.h"
 #include "GameObject.h"
 
+
 enum class GameState{PLAY, EXIT};
 
 class MainGame
@@ -39,6 +40,8 @@ private:
 
 	void fireMissiles(int i);
 
+	void movement();
+
 	void initModels(GameObject*& asteroid);
 	bool collision(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2Rad);
 
@@ -53,6 +56,10 @@ private:
 	void renderFBO();
 
 	void playAudio(unsigned int Source, glm::vec3 pos);
+
+
+	enum{Forward, Left, Right};
+	bool states[4] = {false, false, false, false};
 
 	Display _gameDisplay;
 	GameState _gameState;
@@ -84,6 +91,10 @@ private:
 
 	glm::vec3 currentCamPos;
 
+	glm::vec3 forwardVector;
+	glm::vec3 rotationMatrix;
+	glm::vec3 movementMatrix;
+
 	Skybox skybox;
 
 	vector<std::string> faces;
@@ -96,9 +107,17 @@ private:
 
 	int shipMissiles = 0;
 
+	int cameraMode = 1;
+	float returnToPosition = 30.0f;
+
 	Uint64 NOW = SDL_GetPerformanceCounter();
 	Uint64 LAST = 0;
 	float deltaTime = 0;
 	float rotationSpeed = 2.0f;
+
+
+
+	float speed = 1.0f;
+	float missileSpeed = 10.000f;
 };
 

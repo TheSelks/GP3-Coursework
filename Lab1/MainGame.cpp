@@ -103,7 +103,13 @@ void MainGame::gameLoop()
 		currentCamPos = myCamera.getPos();
 		drawGame();
 		updateDelta();
-		collision(rockMesh.getSpherePos(), rockMesh.getSphereRadius(), shipMesh.getSpherePos(), shipMesh.getSphereRadius());
+
+		for (size_t i = 0; i < 20; i++)
+		{		
+			collision(*asteroid[i].getTM().GetPos(), rockMesh.getSphereRadius(), shipMesh.getSpherePos(), shipMesh.getSphereRadius());
+		}
+
+
 		/*playAudio(backGroundMusic, glm::vec3(0.0f,0.0f,0.0f));*/
 		//cout << "x: " << myCamera.getPos().x << "y: " << myCamera.getPos().y << "z: " << myCamera.getPos().z << "\n";
 	}
@@ -144,20 +150,27 @@ void MainGame::processInput()
 
 			// Ship movement
 			case SDLK_w:
-                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y + 6.0f * deltaTime, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-                myCamera.MoveUp(6.0f * deltaTime);
+                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x - sinf(ship.getTM().GetRot()->z),
+					ship.getTM().GetPos()->y + (cosf(ship.getTM().GetRot()->z) * speed), ship.getTM().GetPos()->z),
+					glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z),
+					glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+			    if(cameraMode == 1  || cameraMode == 3)
+					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z));
 				break;
             case SDLK_a:
-                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x + 6.0f * deltaTime, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-                myCamera.MoveRight(6.0f * deltaTime);
+                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x + speed * deltaTime, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+                if(cameraMode == 1  || cameraMode == 3)
+					myCamera.MoveRight(speed * deltaTime);
 				break;
             case SDLK_s:
-                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y - 6.0f * deltaTime, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-                myCamera.MoveDown(6.0f * deltaTime);
+                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y - speed * deltaTime, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+                if(cameraMode == 1  || cameraMode == 3)
+					myCamera.MoveDown(speed * deltaTime);
 				break;
             case SDLK_d:
-                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x - 6.0f * deltaTime, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-                myCamera.MoveLeft(6.0f * deltaTime);
+                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x - speed * deltaTime, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+                if(cameraMode == 1  || cameraMode == 3)
+					myCamera.MoveLeft(speed * deltaTime);
 				break;
 
 			// Ship rotation
@@ -172,22 +185,52 @@ void MainGame::processInput()
 					glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
 				break;
 
-			// Fire Missle
+			// Change Camera
+			case SDLK_1:
+				if(cameraMode == 3)
+				{
+					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z-returnToPosition));
+				}
+				else
+				{
+					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z));
+				}	
+
+				cameraMode = 1;				
+				break;
+			case SDLK_2:
+				if(cameraMode == 3)
+				{
+					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z-returnToPosition));
+				}
+				cameraMode = 2;
+				break;
+			case SDLK_3:
+				if(cameraMode == 1)
+				{
+					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z+30.0f));
+					myCamera.setLook(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z+30.0f));
+				}
+				cameraMode = 3;				
+				break;
 			
 
 			// Camera movement
 			case SDLK_LEFT:
-				myCamera.MoveLeft(10.0f*deltaTime);
-				//cout << myCamera.getPos().x;
+				if(cameraMode == 2)
+					myCamera.MoveRight(10.0f*deltaTime);
 				break;
 			case SDLK_RIGHT:
-				myCamera.MoveRight(10.0f*deltaTime);
+				if(cameraMode == 2)
+					myCamera.MoveLeft(10.0f*deltaTime);
 				break;
 			case SDLK_UP:
-				myCamera.MoveUp(10.0f * deltaTime);
+				if(cameraMode == 2)
+					myCamera.MoveUp(10.0f * deltaTime);
 				break;
 			case SDLK_DOWN:
-				myCamera.MoveDown(1.0f * deltaTime);
+				if(cameraMode == 2)
+				myCamera.MoveDown(10.0f * deltaTime);
 				break;
 			case SDLK_SPACE:
 				if (look)
@@ -218,7 +261,7 @@ void MainGame::initModels(GameObject*& asteroid)
 		asteroid[i].update(&rockMesh);		
 	}
 
-	ship.transformPositions(glm::vec3(0.0, 0.0, -3.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2,0.2,0.2));
+	ship.transformPositions(glm::vec3(0.0, 0.0, 3.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2,0.2,0.2));
 	
 	for (int i = 0; i < 20; ++i)
 	{
@@ -257,36 +300,23 @@ void MainGame::drawMissiles()
 	{
 		if (missiles[i].getActive())
 		{
-			missiles[i].transformPositions(glm::vec3(missiles[i].getTM().GetPos()->x, missiles[i].getTM().GetPos()->y + 6.0f * deltaTime, missiles[i].getTM().GetPos()->z),
-				glm::vec3(missiles[i].getTM().GetRot()->x, missiles[i].getTM().GetRot()->y, missiles[i].getTM().GetRot()->z), glm::vec3(missiles[i].getTM().GetScale()->x,
-					missiles[i].getTM().GetScale()->y, missiles[i].getTM().GetScale()->z));
+			missiles[i].transformPositions(glm::vec3(missiles[i].getTM().GetPos()->x - (sinf(missiles[i].getTM().GetRot()->z) + missileSpeed) * deltaTime,
+					missiles[i].getTM().GetPos()->y + (cosf(missiles[i].getTM().GetRot()->z) + missileSpeed) * deltaTime, missiles[i].getTM().GetPos()->z), glm::vec3(missiles[i].getTM().GetRot()->x, missiles[i].getTM().GetRot()->y, missiles[i].getTM().GetRot()->z), glm::vec3(missiles[i].getTM().GetScale()->x, missiles[i].getTM().GetScale()->y, missiles[i].getTM().GetScale()->z));
 			missiles[i].draw(&missileMesh);
 			missiles[i].update(&missileMesh);
 			rimShader.Update(missiles[i].getTM(), myCamera);
 		}		
 	}
-
-	
-
-	for(int i = 0; i < 20; ++i)
-	{
-		for(int j = 0; j < 20; ++j)
-		{
-			collision(missileMesh.getSpherePos(), missileMesh.getSphereRadius(), rockMesh.getSpherePos(), rockMesh.getSphereRadius());
-		}
-	}
 }
 
 void MainGame::fireMissiles(int i) 
 {	
-		missiles[i].transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z),glm::vec3(ship.getTM().GetScale()->x*0.5f, ship.getTM().GetScale()->y*0.5f, ship.getTM().GetScale()->z*0.5f));
+		missiles[i].transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(0, 0, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x*0.5f, ship.getTM().GetScale()->y*0.5f, ship.getTM().GetScale()->z*0.5f));
+
 		missiles[i].setActive(true);
 		i = +1;
 		shipMissiles = i;
 	
-
-
-
 	/** CALL THIS FROM processInput()
 	* Set the missle transform to the ship transform ONCE (initial conditions)
 	* Set the missle to active (check it is not already active)
@@ -294,8 +324,6 @@ void MainGame::fireMissiles(int i)
 	* check for asteroid collision
 	* handle asteroid collision
 	*/
-
-
 }
 
 void MainGame::drawShip()
