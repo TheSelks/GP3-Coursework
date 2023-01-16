@@ -1,13 +1,10 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(534,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Lab2.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Audio.cpp
   MainGame.cpp
-D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(299,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(300,11): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(301,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(510,44): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(510,41): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(518,65): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(518,62): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-  main.cpp
-  Generating Code...
+D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(335,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(336,11): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(337,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(561,44): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(561,41): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(569,65): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(569,62): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
   Lab1.vcxproj -> D:\Uni\GP3-Coursework\Debug\Lab1.exe
