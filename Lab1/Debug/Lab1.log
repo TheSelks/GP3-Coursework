@@ -1,8 +1,8 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(534,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Lab2.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   MainGame.cpp
+D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(335,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(336,11): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(337,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(338,11): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(339,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(555,44): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
 D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(555,41): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
 D:\Uni\GP3-Coursework\Lab1\MainGame.cpp(563,65): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data

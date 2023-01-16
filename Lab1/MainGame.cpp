@@ -198,8 +198,6 @@ void MainGame::processInput()
 			_gameState = GameState::EXIT;
 		}
 
-	//SDL_Event evnt;
-
 	//while (SDL_PollEvent(&evnt)) //get and process events
 	//{
 	//	switch (evnt.type)
@@ -409,7 +407,9 @@ void MainGame::drawMissiles()
 
 void MainGame::fireMissiles(int i) 
 {	
-		missiles[i].transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(0, 0, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x*3, ship.getTM().GetScale()->y*3, ship.getTM().GetScale()->z*3));
+		missiles[i].transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z),
+			glm::vec3(0, 0, ship.getTM().GetRot()->z),
+			glm::vec3(ship.getTM().GetScale()->x*3, ship.getTM().GetScale()->y*3, ship.getTM().GetScale()->z*3));
 
 		missiles[i].setActive(true);
 		i = +1;
