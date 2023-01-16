@@ -22,8 +22,8 @@ void MainGame::run()
 void MainGame::initSystems()
 {
 	_gameDisplay.initDisplay(); 
-	/*whistle = audioDevice.loadSound("..\\res\\bang.wav");
-	backGroundMusic = audioDevice.loadSound("..\\res\\background.wav");*/
+	whistle = audioDevice.loadSound("..\\res\\bang.wav");
+	backGroundMusic = audioDevice.loadSound("..\\res\\background.wav");
 	texture.load("..\\res\\bricks.jpg");
 	rockMesh.loadModel("..\\res\\Rock1.obj");
 	shipMesh.loadModel("..\\res\\R33.obj");
@@ -110,141 +110,184 @@ void MainGame::gameLoop()
 		}
 
 
-		/*playAudio(backGroundMusic, glm::vec3(0.0f,0.0f,0.0f));*/
+		playAudio(backGroundMusic, glm::vec3(0.0f,0.0f,0.0f));
 		//cout << "x: " << myCamera.getPos().x << "y: " << myCamera.getPos().y << "z: " << myCamera.getPos().z << "\n";
 	}
 }
 
 void MainGame::processInput()
 {
+	const Uint8 *keyboard_state_array = SDL_GetKeyboardState(NULL);
 	SDL_Event evnt;
 
-	while (SDL_PollEvent(&evnt)) //get and process events
+	while (SDL_PollEvent(&evnt))
 	{
-		switch (evnt.type)
+		if(evnt.type == SDL_KEYDOWN || evnt.type == SDL_KEYUP)
 		{
-		case SDL_MOUSEWHEEL:
-			myCamera.MoveBack(evnt.wheel.y);
-			break;
-		default:
-			break;
-		case SDL_MOUSEBUTTONDOWN:
-			switch (evnt.button.button)
+			if(keyboard_state_array[SDL_SCANCODE_W])
 			{
-			case SDL_BUTTON_LEFT:
-				fireMissiles(shipMissiles);
-				break;
-			case SDL_BUTTON_RIGHT:
-				//SDL_ShowSimpleMessageBox(0, "Mouse", "Right button was pressed!", _gameDisplay.getWindow());
-				break;
-			case SDL_BUTTON_MIDDLE:
-				break;
-			default:
-				//SDL_ShowSimpleMessageBox(0, "Mouse", "Some other button was pressed!", window);
-				break;
+				ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x - sinf(ship.getTM().GetRot()->z),
+						ship.getTM().GetPos()->y + (cosf(ship.getTM().GetRot()->z) * speed), ship.getTM().GetPos()->z),
+						glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z),
+						glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+					if(cameraMode == 1  || cameraMode == 3)
+						myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z));
 			}
-		case SDL_KEYDOWN:
-			/* Check the SDLKey values and move change the coords */
-			switch (evnt.key.keysym.sym)
+
+			if(keyboard_state_array[SDL_SCANCODE_E] && !(keyboard_state_array[SDL_SCANCODE_Q]))
 			{
-
-			// Ship movement
-			case SDLK_w:
-                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x - sinf(ship.getTM().GetRot()->z),
-					ship.getTM().GetPos()->y + (cosf(ship.getTM().GetRot()->z) * speed), ship.getTM().GetPos()->z),
-					glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z),
-					glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-			    if(cameraMode == 1  || cameraMode == 3)
-					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z));
-				break;
-            case SDLK_a:
-                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x + speed * deltaTime, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-                if(cameraMode == 1  || cameraMode == 3)
-					myCamera.MoveRight(speed * deltaTime);
-				break;
-            case SDLK_s:
-                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y - speed * deltaTime, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-                if(cameraMode == 1  || cameraMode == 3)
-					myCamera.MoveDown(speed * deltaTime);
-				break;
-            case SDLK_d:
-                ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x - speed * deltaTime, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-                if(cameraMode == 1  || cameraMode == 3)
-					myCamera.MoveLeft(speed * deltaTime);
-				break;
-
-			// Ship rotation
-			case SDLK_e:
 				ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z),
-					glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z + rotationSpeed * deltaTime),
-					glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-                break;
-			case SDLK_q:
-				ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z),
-					glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z - rotationSpeed * deltaTime),
-					glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
-				break;
-
-			// Change Camera
-			case SDLK_1:
-				if(cameraMode == 3)
-				{
-					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z-returnToPosition));
-				}
-				else
-				{
-					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z));
-				}	
-
-				cameraMode = 1;				
-				break;
-			case SDLK_2:
-				if(cameraMode == 3)
-				{
-					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z-returnToPosition));
-				}
-				cameraMode = 2;
-				break;
-			case SDLK_3:
-				if(cameraMode == 1)
-				{
-					myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z+30.0f));
-					myCamera.setLook(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z+30.0f));
-				}
-				cameraMode = 3;				
-				break;
-			
-
-			// Camera movement
-			case SDLK_LEFT:
-				if(cameraMode == 2)
-					myCamera.MoveRight(10.0f*deltaTime);
-				break;
-			case SDLK_RIGHT:
-				if(cameraMode == 2)
-					myCamera.MoveLeft(10.0f*deltaTime);
-				break;
-			case SDLK_UP:
-				if(cameraMode == 2)
-					myCamera.MoveUp(10.0f * deltaTime);
-				break;
-			case SDLK_DOWN:
-				if(cameraMode == 2)
-				myCamera.MoveDown(10.0f * deltaTime);
-				break;
-			case SDLK_SPACE:
-				if (look)
-					look = false;
-				else
-					look = true;
-				break;
-			default:
-				break;
-			case SDL_QUIT:
-				_gameState = GameState::EXIT;
-				break;
+						glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z + rotationSpeed * deltaTime),
+						glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
 			}
+
+			if(keyboard_state_array[SDL_SCANCODE_Q] && !(keyboard_state_array[SDL_SCANCODE_E]))
+			{
+				ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z),
+						glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z - rotationSpeed * deltaTime),
+						glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+			}
+	
 		}
+
+		if(evnt.type == SDL_MOUSEBUTTONDOWN && evnt.button.button)
+		{
+			fireMissiles(shipMissiles);
+		}
+
+		if(evnt.type == SDL_QUIT)
+		{
+			_gameState = GameState::EXIT;
+		}
+
+	//SDL_Event evnt;
+
+	//while (SDL_PollEvent(&evnt)) //get and process events
+	//{
+	//	switch (evnt.type)
+	//	{
+	//	case SDL_MOUSEWHEEL:
+	//		myCamera.MoveBack(evnt.wheel.y);
+	//		break;
+	//	default:
+	//		break;
+	//	case SDL_MOUSEBUTTONDOWN:
+	//		switch (evnt.button.button)
+	//		{
+	//		case SDL_BUTTON_LEFT:
+	//			fireMissiles(shipMissiles);
+	//			break;
+	//		case SDL_BUTTON_RIGHT:
+	//			//SDL_ShowSimpleMessageBox(0, "Mouse", "Right button was pressed!", _gameDisplay.getWindow());
+	//			break;
+	//		case SDL_BUTTON_MIDDLE:
+	//			break;
+	//		default:
+	//			//SDL_ShowSimpleMessageBox(0, "Mouse", "Some other button was pressed!", window);
+	//			break;
+	//		}
+	//	case SDL_KEYDOWN:
+	//		/* Check the SDLKey values and move change the coords */
+	//		switch (evnt.key.keysym.sym)
+	//		{
+
+	//		// Ship movement
+	//		case SDLK_w:
+ //               ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x - sinf(ship.getTM().GetRot()->z),
+	//				ship.getTM().GetPos()->y + (cosf(ship.getTM().GetRot()->z) * speed), ship.getTM().GetPos()->z),
+	//				glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z),
+	//				glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+	//		    if(cameraMode == 1  || cameraMode == 3)
+	//				myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z));
+	//			break;
+ //           case SDLK_a:
+ //               ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x + speed * deltaTime, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+ //               if(cameraMode == 1  || cameraMode == 3)
+	//				myCamera.MoveRight(speed * deltaTime);
+	//			break;
+ //           case SDLK_s:
+ //               ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y - speed * deltaTime, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+ //               if(cameraMode == 1  || cameraMode == 3)
+	//				myCamera.MoveDown(speed * deltaTime);
+	//			break;
+ //           case SDLK_d:
+ //               ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x - speed * deltaTime, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z), glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z), glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+ //               if(cameraMode == 1  || cameraMode == 3)
+	//				myCamera.MoveLeft(speed * deltaTime);
+	//			break;
+
+	//		// Ship rotation
+	//		case SDLK_e:
+	//			ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z),
+	//				glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z + rotationSpeed * deltaTime),
+	//				glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+ //               break;
+	//		case SDLK_q:
+	//			ship.transformPositions(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, ship.getTM().GetPos()->z),
+	//				glm::vec3(ship.getTM().GetRot()->x, ship.getTM().GetRot()->y, ship.getTM().GetRot()->z - rotationSpeed * deltaTime),
+	//				glm::vec3(ship.getTM().GetScale()->x, ship.getTM().GetScale()->y, ship.getTM().GetScale()->z));
+	//			break;
+
+	//		// Change Camera
+	//		case SDLK_1:
+	//			if(cameraMode == 3)
+	//			{
+	//				myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z-returnToPosition));
+	//			}
+	//			else
+	//			{
+	//				myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z));
+	//			}	
+
+	//			cameraMode = 1;				
+	//			break;
+	//		case SDLK_2:
+	//			if(cameraMode == 3)
+	//			{
+	//				myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z-returnToPosition));
+	//			}
+	//			cameraMode = 2;
+	//			break;
+	//		case SDLK_3:
+	//			if(cameraMode == 1)
+	//			{
+	//				myCamera.setPos(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z+30.0f));
+	//				myCamera.setLook(glm::vec3(ship.getTM().GetPos()->x, ship.getTM().GetPos()->y, myCamera.getPos().z+30.0f));
+	//			}
+	//			cameraMode = 3;				
+	//			break;
+	//		
+
+	//		// Camera movement
+	//		case SDLK_LEFT:
+	//			if(cameraMode == 2)
+	//				myCamera.MoveRight(10.0f*deltaTime);
+	//			break;
+	//		case SDLK_RIGHT:
+	//			if(cameraMode == 2)
+	//				myCamera.MoveLeft(10.0f*deltaTime);
+	//			break;
+	//		case SDLK_UP:
+	//			if(cameraMode == 2)
+	//				myCamera.MoveUp(10.0f * deltaTime);
+	//			break;
+	//		case SDLK_DOWN:
+	//			if(cameraMode == 2)
+	//			myCamera.MoveDown(10.0f * deltaTime);
+	//			break;
+	//		case SDLK_SPACE:
+	//			if (look)
+	//				look = false;
+	//			else
+	//				look = true;
+	//			break;
+	//		default:
+	//			break;
+	//		case SDL_QUIT:
+	//			_gameState = GameState::EXIT;
+	//			break;
+	//		}
+	//	}
 
 	}
 }
@@ -261,7 +304,7 @@ void MainGame::initModels(GameObject*& asteroid)
 		asteroid[i].update(&rockMesh);		
 	}
 
-	ship.transformPositions(glm::vec3(0.0, 0.0, 3.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2,0.2,0.2));
+	ship.transformPositions(glm::vec3(0.0, 0.0, 2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.2,0.2,0.2));
 	
 	for (int i = 0; i < 20; ++i)
 	{
@@ -300,8 +343,10 @@ void MainGame::drawMissiles()
 	{
 		if (missiles[i].getActive())
 		{
-			missiles[i].transformPositions(glm::vec3(missiles[i].getTM().GetPos()->x - (sinf(missiles[i].getTM().GetRot()->z) + missileSpeed) * deltaTime,
-					missiles[i].getTM().GetPos()->y + (cosf(missiles[i].getTM().GetRot()->z) + missileSpeed) * deltaTime, missiles[i].getTM().GetPos()->z), glm::vec3(missiles[i].getTM().GetRot()->x, missiles[i].getTM().GetRot()->y, missiles[i].getTM().GetRot()->z), glm::vec3(missiles[i].getTM().GetScale()->x, missiles[i].getTM().GetScale()->y, missiles[i].getTM().GetScale()->z));
+			missiles[i].transformPositions(glm::vec3(missiles[i].getTM().GetPos()->x - sinf(missiles[i].getTM().GetRot()->z),
+					missiles[i].getTM().GetPos()->y + (cosf(missiles[i].getTM().GetRot()->z) * speed),
+				missiles[i].getTM().GetPos()->z), glm::vec3(missiles[i].getTM().GetRot()->x, missiles[i].getTM().GetRot()->y, missiles[i].getTM().GetRot()->z),
+				glm::vec3(missiles[i].getTM().GetScale()->x, missiles[i].getTM().GetScale()->y, missiles[i].getTM().GetScale()->z));
 			missiles[i].draw(&missileMesh);
 			missiles[i].update(&missileMesh);
 			rimShader.Update(missiles[i].getTM(), myCamera);
@@ -358,8 +403,8 @@ bool MainGame::collision(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2
 
 	if (distance < (m1Rad + m2Rad))
 	{
-		//audioDevice.setlistener(myCamera.getPos(), m1Pos); //add bool to mesh
-		/*playAudio(whistle, m1Pos);*/
+		audioDevice.setlistener(myCamera.getPos(), m1Pos); //add bool to mesh
+		playAudio(whistle, m1Pos);
 		cout << "Collision";
 		return true;
 	}
@@ -372,19 +417,19 @@ bool MainGame::collision(glm::vec3 m1Pos, float m1Rad, glm::vec3 m2Pos, float m2
 void MainGame::playAudio(unsigned int Source, glm::vec3 pos)
 {
 	
-	/*ALint state; 
-	alGetSourcei(Source, AL_SOURCE_STATE, &state);*/
-	/*
-	Possible values of state
-	AL_INITIAL
-	AL_STOPPED
-	AL_PLAYING
-	AL_PAUSED
-	*/
-	//if (AL_PLAYING != state)
-	//{
-	//	audioDevice.playSound(Source, pos);
-	//}
+	ALint state; 
+	alGetSourcei(Source, AL_SOURCE_STATE, &state);
+	
+	//Possible values of state
+	//AL_INITIAL
+	//AL_STOPPED
+	//AL_PLAYING
+	//AL_PAUSED
+	
+	if (AL_PLAYING != state)
+	{
+		audioDevice.playSound(Source, pos);
+	}
 }
 
 void MainGame::linkFogShader()

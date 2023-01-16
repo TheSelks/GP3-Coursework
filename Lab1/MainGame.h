@@ -99,7 +99,7 @@ private:
 
 	vector<std::string> faces;
 	
-	/*Audio audioDevice;*/
+	Audio audioDevice;
 	bool look = true;
 	float counter;
 	unsigned int whistle;
@@ -113,7 +113,7 @@ private:
 	Uint64 NOW = SDL_GetPerformanceCounter();
 	Uint64 LAST = 0;
 	float deltaTime = 0;
-	float rotationSpeed = 2.0f;
+	float rotationSpeed = 6.0f;
 
 
 
